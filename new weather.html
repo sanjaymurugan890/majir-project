@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Weather App</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f5f5f5;
+			background-image: url('https://images.unsplash.com/photo-1592210454359-9043f067919b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80');
+			text-align: center;
+		}
+		.card{
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			background: #000000d0;
+            color: white;
+            padding: 2em;
+            border-radius: 30px;
+			width: 50%;
+			margin: 1em;
+		}
+
+   
+		h1 {
+			text-align: center;
+			margin-top: 20px;
+		}
+
+		form {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-top: 20px;
+		}
+
+		label {
+			font-size: 20px;
+			margin-right: 10px;
+		}
+
+		input {
+			padding: 10px;
+			font-size: 16px;
+			border: none;
+			border-radius: 5px;
+			box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+			outline: none;
+		}
+
+		button {
+			padding: 10px 20px;
+			font-size: 16px;
+			border: none;
+			border-radius: 5px;
+			background-color: #4CAF50;
+			color: white;
+			box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+			cursor: pointer;
+		}
+
+		button:hover {
+			background-color: #3e8e41;
+		}
+
+		#weather-info {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: center;
+			margin-top: 20px;
+		}
+
+		.weather-day {
+			margin: 20px;
+			padding: 20px;
+			width: 200px;
+			border-radius: 5px;
+			box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+			background-color: #fff;
+			text-align: center;
+		}
+
+		.weather-icon {
+			width: 50px;
+			height: 50px;
+			margin-bottom: 10px;
+		}
+
+		.weather-description {
+			font-size: 16px;
+			margin: 0;
+		}
+
+		.weather-temperature {
+			font-size: 20px;
+			margin: 10px 0;
+			font-weight: bold;
+		}
+
+		
+		.weather-day {
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<div class="card" align="center">
+	<h1>Weather App</h1>
+	<label for="city">Enter City Name: </label>
+	<input type="text" id="city" name="city">
+	<button onclick="getWeather()">Get Weather</button>
+
+	<div id="weather-info"></div>
+	</div> 
+
+	<script>
+		function getWeather() {
+			// Get the city name entered by the user
+			const city = document.getElementById("city").value;
+
+			// Make a request to the weather API using the city name
+			fetch("https://api.openweathermap.org/data/2.5/forecast?q="+ city + "&appid=89cc53cc407bf30ee02cd6b1a40be0d9")
+				.then(response => response.json())
+				.then(data => {
+					// Create a variable to store the HTML content for weather information
+					let weatherHTML = "";
+
+					// Loop through the weather data and display the weather information for each day
+					for (let i = 0; i < data.list.length; i += 8) {
+						const date = new Date(data.list[i].dt_txt);
+						const dayOfWeek = date.toLocaleDateString("en-US", { weekday: "long" });
+						const icon = data.list[i].weather[0].icon;
+						const description = data.list[i].weather[0].description;
+						const temperature = Math.round(data.list[i].main.temp - 273.15);
+
+						weatherHTML += `
+							<div>
+								<h2>${dayOfWeek}</h2>
+								<img src="https://openweathermap.org/img/w/${icon}.png" alt="${description}">
+								<p>${description}</p>
+								<p>Temperature: ${temperature} &deg;C</p>
+							</div>
+						`;
+					}
+
+					// Display the weather information on the page
+					document.getElementById("weather-info").innerHTML = weatherHTML;
+				})
+				.catch(error => console.log(error));
+		}
+	</script>
+</body>
+</html>
+
+
+
